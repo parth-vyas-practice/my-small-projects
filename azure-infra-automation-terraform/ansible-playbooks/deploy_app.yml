@@ -1,0 +1,30 @@
+---
+- hosts: all
+  # become: yes
+  # become_user: "{{ ansible_user | default(lookup('env', 'USER')) }}"
+  vars:
+    project_path: ~/sample-app
+  tasks:
+    - name: install pm2
+      command: sudo npm i -g pm2
+
+    - name: create folder 
+      file:
+        dest={{ project_path }}
+        mode=0755
+        recurse=yes
+        state=directory
+    - name: Clone app repository
+      git:
+        repo: https://github.com/parth-vyas-practice/node-js-sample.git
+        dest: "{{ project_path }}"
+    - name: download dependancies with npm install
+      npm:
+        path: "{{ project_path }}"
+    - name: Start pm2
+      command: pm2 start {{ project_path }}/index.js --name node-app
+    - name: run pm2 at reboot (setup cron job)
+      cron:
+        name: "run pm2 at reboot"
+        special_time: reboot
+        job: "pm2 start {{ project_path }}/index.js --name node-app"

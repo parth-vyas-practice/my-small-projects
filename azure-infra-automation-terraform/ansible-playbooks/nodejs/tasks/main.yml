@@ -1,0 +1,20 @@
+---
+- import_tasks: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- import_tasks: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure npm global packages are installed.
+  npm:
+    name: "{{ item.name | default(item) }}"
+    version: "{{ item.version | default('latest') }}"
+    global: true
+    state: latest
+  with_items: "{{ nodejs_npm_global_packages }}"
+  tags: ['skip_ansible_lint']
+
+- name: Install packages defined in a given package.json.
+  npm:
+    path: "{{ nodejs_package_json_path }}"
+  when: nodejs_package_json_path is defined and nodejs_package_json_path

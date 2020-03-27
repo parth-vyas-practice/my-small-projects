@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: update software packges
+      apt: 
+        name: "*"
+        update_cache: yes      
+    - name: add apt key for nodesource
+      apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+
+    - name: add repo for nodesource
+      shell: |
+         curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+    - name: install nodejs
+      apt: 
+        name: nodejs
+        state: present
+
+    - name: install pm2
+      command: npm install -g pm2

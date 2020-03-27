@@ -1,0 +1,11 @@
+---
+- hosts: all
+  vars:
+    project_path: ~/sample-app
+    file_path: ../terraform-code/
+    file_name: db-url.txt
+  tasks:
+    - name: copy to server
+      copy:
+        src: "{{ file_path }}/{{ file_name }}"
+        dest: "{{ project_path }}/{{ file_name }}"
